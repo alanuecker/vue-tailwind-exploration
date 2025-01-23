@@ -3,7 +3,8 @@ interface SearchResult {
   objectIDs: Array<string>;
 }
 
-interface ItemResult {
+export interface ItemResult {
+  objectID: string;
   title: string;
   artistDisplayName: string;
   objectBeginDate: number;
@@ -29,14 +30,11 @@ export async function getSearch(term: string): Promise<SearchResult> {
 }
 
 export async function getItem(objectID: string): Promise<ItemResult> {
-  console.log('check item', objectID);
   try {
     const response = await fetch(
       `https://collectionapi.metmuseum.org/public/collection/v1/objects/${objectID}`,
       { method: 'GET' },
     );
-
-    console.log(response);
 
     if (!response.ok) {
       throw new Error(`Response status:, ${response.status}`);
@@ -44,9 +42,18 @@ export async function getItem(objectID: string): Promise<ItemResult> {
 
     const data = await response.json();
 
+    console.log(data);
+
     const { title, artistDisplayName, objectBeginDate, objectEndDate, primaryImageSmall } = data;
 
-    return { title, artistDisplayName, objectBeginDate, objectEndDate, primaryImageSmall };
+    return {
+      objectID,
+      title,
+      artistDisplayName,
+      objectBeginDate,
+      objectEndDate,
+      primaryImageSmall,
+    };
   } catch (error) {
     throw new Error(error);
   }
