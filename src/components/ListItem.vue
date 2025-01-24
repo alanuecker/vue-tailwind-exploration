@@ -9,8 +9,8 @@ defineProps<{
 </script>
 
 <template>
-  <div>
-    <img :src="primaryImageSmall" />
+  <li>
+    <img class="aspect-square" :src="primaryImageSmall" />
     <div>
       <span>{{ title }}</span>
       <span>{{ artistDisplayName }}</span>
@@ -18,5 +18,5 @@ defineProps<{
         <span>{{ objectBeginDate }}</span> - <span>{{ objectEndDate }}</span>
       </div>
     </div>
-  </div>
+  </li>
 </template>
