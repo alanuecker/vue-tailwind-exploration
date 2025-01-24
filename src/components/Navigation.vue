@@ -31,9 +31,9 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <header class="flex w-full items-center justify-center bg-white">
+  <header class="flex w-full items-center justify-center border-b-2 border-b-gray-900 bg-white">
     <div class="container">
-      <div class="relative flex w-full items-center justify-end px-4 lg:justify-start">
+      <div class="relative flex w-full items-center justify-end px-4 py-2 lg:justify-start">
         <button
           @click="toggleNavbar"
           ref="dropdownButtonRef"
@@ -47,8 +47,8 @@ onUnmounted(() => {
         <nav
           :class="{ hidden: !open }"
           id="navbarCollapse"
-          class="absolute top-full right-4 w-full max-w-[250px] rounded-lg bg-white px-6 py-5 shadow lg:static
-            lg:block lg:w-full lg:max-w-full lg:shadow-none lg:dark:bg-transparent"
+          class="absolute top-full right-4 w-full max-w-[250px] rounded-lg bg-white py-2 shadow lg:static lg:block
+            lg:w-full lg:max-w-full lg:shadow-none lg:dark:bg-transparent"
         >
           <ul class="block lg:flex lg:gap-8">
             <NavigationItem
