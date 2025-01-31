@@ -20,7 +20,6 @@ async function fetchData() {
   loading.value = true;
 
   try {
-    // replace `getresults` with your data fetching util / API wrapper
     const searchResult = await getSearch(text.value);
     total.value = searchResult.total;
 
@@ -65,6 +64,7 @@ async function fetchData() {
             <ListItem
               v-for="result in results"
               :key="result.objectID"
+              :objectID="result.objectID"
               :title="result.title"
               :artist-display-name="result.artistDisplayName"
               :object-begin-date="result.objectBeginDate"
