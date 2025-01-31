@@ -10,12 +10,14 @@ defineProps<{
 
 <template>
   <li>
-    <img class="aspect-square" :src="primaryImageSmall" />
-    <div>
-      <span>{{ title }}</span>
-      <span>{{ artistDisplayName }}</span>
+    <img :src="primaryImageSmall" />
+    <div class="mt-1">
+      <span class="text-lg font-medium text-gray-900">{{ title }}</span>
+      <div class="text-base text-gray-900">{{ artistDisplayName }}</div>
       <div>
-        <span>{{ objectBeginDate }}</span> - <span>{{ objectEndDate }}</span>
+        <span class="text-base text-gray-700">{{ objectBeginDate }}</span>
+        <span class="text-base text-gray-700"> - </span>
+        <span class="text-base text-gray-700">{{ objectEndDate }}</span>
       </div>
     </div>
   </li>

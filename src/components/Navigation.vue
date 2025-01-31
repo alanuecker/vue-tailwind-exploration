@@ -47,7 +47,7 @@ onUnmounted(() => {
         <nav
           :class="{ hidden: !open }"
           id="navbarCollapse"
-          class="absolute top-full right-4 w-full max-w-[250px] rounded-lg bg-white py-2 shadow lg:static lg:block
+          class="absolute top-full right-4 w-full max-w-[250px] rounded-lg bg-white shadow lg:static lg:block
             lg:w-full lg:max-w-full lg:shadow-none lg:dark:bg-transparent"
         >
           <ul class="block lg:flex lg:gap-8">

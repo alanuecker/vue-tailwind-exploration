@@ -24,10 +24,10 @@ async function fetchData() {
     const searchResult = await getSearch(text.value);
     total.value = searchResult.total;
 
-    const promises = searchResult.objectIDs.slice(0, 10).map((id) => getItem(id));
+    const promises = searchResult.objectIDs.slice(0, 25).map((id) => getItem(id));
 
     const items = await Promise.all(promises);
-    results.value = items;
+    results.value = items.filter(({ primaryImageSmall }) => !!primaryImageSmall);
   } catch (err) {
     error.value = err.toString();
   } finally {
@@ -55,22 +55,24 @@ async function fetchData() {
         </div>
       </div>
     </div>
-    <div class="flex">
-      <div v-if="loading">Loading</div>
-      <div v-if="error">{{ error }}</div>
-      <div v-if="results && results.length > 0">
-        <span>Found: {{ total }}</span>
-        <ul class="grid grid-cols-2 gap-8 sm:grid-cols-3">
-          <ListItem
-            v-for="result in results"
-            :key="result.objectID"
-            :title="result.title"
-            :artist-display-name="result.artistDisplayName"
-            :object-begin-date="result.objectBeginDate"
-            :object-end-date="result.objectEndDate"
-            :primary-image-small="result.primaryImageSmall"
-          />
-        </ul>
+    <div class="mt-8 flex w-full items-center justify-center bg-white">
+      <div class="container flex w-full items-end gap-4 px-4">
+        <div v-if="loading">Loading</div>
+        <div v-if="error">{{ error }}</div>
+        <div v-if="results && results.length > 0">
+          <span class="text-base text-gray-900">Found: {{ total }}</span>
+          <ul class="mt-4 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+            <ListItem
+              v-for="result in results"
+              :key="result.objectID"
+              :title="result.title"
+              :artist-display-name="result.artistDisplayName"
+              :object-begin-date="result.objectBeginDate"
+              :object-end-date="result.objectEndDate"
+              :primary-image-small="result.primaryImageSmall"
+            />
+          </ul>
+        </div>
       </div>
     </div>
   </main>
