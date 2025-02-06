@@ -1,21 +1,24 @@
+const API_KEY = import.meta.env.VITE_API_KEY;
+
 interface SearchResult {
-  total: number;
-  objectIDs: Array<string>;
+  count: number;
+  items: Array<Item>;
 }
 
-export interface ItemResult {
-  objectID: string;
+export interface Item {
+  id: string;
+  objectNumber: string;
   title: string;
-  artistDisplayName: string;
-  objectBeginDate: number;
-  objectEndDate: number;
-  primaryImageSmall: string;
+  longTitle: string;
+  artist: string;
+  image: string;
 }
 
 export async function getSearch(term: string): Promise<SearchResult> {
   try {
     const response = await fetch(
-      `https://collectionapi.metmuseum.org/public/collection/v1/search?q=${term}`,
+      `https://www.rijksmuseum.nl/api/en/collection?key=${API_KEY}&format=json&p=0&ps=20&q=${term}&imgonly=true`,
+      { method: 'GET' },
     );
 
     if (!response.ok) {
@@ -23,16 +26,29 @@ export async function getSearch(term: string): Promise<SearchResult> {
     }
 
     const data = await response.json();
-    return data;
+    console.log(data);
+    return {
+      count: data.count,
+      items: data.artObjects.map(
+        ({ id, objectNumber, title, longTitle, principalOrFirstMaker, webImage }) => ({
+          id,
+          objectNumber,
+          title,
+          longTitle,
+          artist: principalOrFirstMaker,
+          image: webImage.url,
+        }),
+      ),
+    };
   } catch (error) {
     throw new Error(error);
   }
 }
 
-export async function getItem(objectID: string): Promise<ItemResult> {
+export async function getItem(objectNumber: string): Promise<Item> {
   try {
     const response = await fetch(
-      `https://collectionapi.metmuseum.org/public/collection/v1/objects/${objectID}`,
+      `https://www.rijksmuseum.nl/api/en/collection/${objectNumber}?key=${API_KEY}&format=json`,
       { method: 'GET' },
     );
 
@@ -44,15 +60,15 @@ export async function getItem(objectID: string): Promise<ItemResult> {
 
     console.log(data);
 
-    const { title, artistDisplayName, objectBeginDate, objectEndDate, primaryImageSmall } = data;
+    const { id, title, longTitle, principalOrFirstMaker, webImage } = data.artObject;
 
     return {
-      objectID,
+      id,
+      objectNumber,
       title,
-      artistDisplayName,
-      objectBeginDate,
-      objectEndDate,
-      primaryImageSmall,
+      longTitle,
+      artist: principalOrFirstMaker,
+      image: webImage.url,
     };
   } catch (error) {
     throw new Error(error);

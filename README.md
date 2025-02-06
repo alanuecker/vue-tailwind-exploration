@@ -2,7 +2,7 @@
 
 This project serves as a playground to learn Vue 3 and Tailwind 4.
 
-For now it just fetches data from the public "The Metropolitan Museum of Art Collection" API.
+For now it just fetches data from the public Rijksmuseum API.
 
 ## Project Setup
 

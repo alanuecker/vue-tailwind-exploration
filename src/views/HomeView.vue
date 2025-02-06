@@ -5,11 +5,11 @@ import type { Ref } from 'vue';
 import ListItem from '../components/ListItem.vue';
 import Button from '../components/Button.vue';
 
-import { getItem, getSearch } from './api.ts';
-import type { ItemResult } from './api.ts';
+import { getSearch } from './api.ts';
+import type { Item } from './api.ts';
 
 const loading = ref(false);
-const results: Ref<ItemResult[]> = ref([]);
+const results: Ref<Item[]> = ref([]);
 const error = ref(null);
 const total = ref(0);
 const text = ref('Sunflowers');
@@ -21,12 +21,9 @@ async function fetchData() {
 
   try {
     const searchResult = await getSearch(text.value);
-    total.value = searchResult.total;
+    total.value = searchResult.count;
 
-    const promises = searchResult.objectIDs.slice(0, 25).map((id) => getItem(id));
-
-    const items = await Promise.all(promises);
-    results.value = items.filter(({ primaryImageSmall }) => !!primaryImageSmall);
+    results.value = searchResult.items;
   } catch (err) {
     error.value = err.toString();
   } finally {
@@ -63,13 +60,11 @@ async function fetchData() {
           <ul class="mt-4 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
             <ListItem
               v-for="result in results"
-              :key="result.objectID"
-              :objectID="result.objectID"
-              :title="result.title"
-              :artist-display-name="result.artistDisplayName"
-              :object-begin-date="result.objectBeginDate"
-              :object-end-date="result.objectEndDate"
-              :primary-image-small="result.primaryImageSmall"
+              :key="result.id"
+              :objectNumber="result.objectNumber"
+              :longTitle="result.longTitle"
+              :artist="result.artist"
+              :image="result.image"
             />
           </ul>
         </div>

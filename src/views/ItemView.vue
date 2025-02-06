@@ -6,12 +6,12 @@ import { useRoute } from 'vue-router';
 import Button from '../components/Button.vue';
 
 import { getItem } from './api.ts';
-import type { ItemResult } from './api.ts';
+import type { Item } from './api.ts';
 
 const route = useRoute();
 
 const loading = ref(false);
-const result: Ref<ItemResult | null> = ref(null);
+const result: Ref<Item | null> = ref(null);
 const error = ref(null);
 
 watch(() => route.params.id, fetchData, { immediate: true });
@@ -39,15 +39,10 @@ async function fetchData(id: string) {
         <div v-if="loading">Loading</div>
         <div v-if="error">{{ error }}</div>
         <div class="flex flex-col" v-if="result">
-          <img :src="result.primaryImageSmall" />
+          <img :src="result.image" />
           <div class="mt-1">
-            <h1 class="text-3xl font-bold text-gray-900">{{ result.title }}</h1>
-            <h2 class="text-lg text-gray-900">{{ result.artistDisplayName }}</h2>
-            <div>
-              <span class="text-base text-gray-700">{{ result.objectBeginDate }}</span>
-              <span class="text-base text-gray-700"> - </span>
-              <span class="text-base text-gray-700">{{ result.objectEndDate }}</span>
-            </div>
+            <h1 class="text-3xl font-bold text-gray-900">{{ result.longTitle }}</h1>
+            <h2 class="text-lg text-gray-900">{{ result.artist }}</h2>
           </div>
         </div>
       </div>

@@ -1,26 +1,19 @@
 <script setup lang="ts">
 defineProps<{
-  objectID: string;
-  title: string;
-  artistDisplayName: string;
-  objectBeginDate: number;
-  objectEndDate: number;
-  primaryImageSmall: string;
+  objectNumber: string;
+  longTitle: string;
+  artist: string;
+  image: string;
 }>();
 </script>
 
 <template>
-  <RouterLink :to="'items/' + objectID">
+  <RouterLink :to="'items/' + objectNumber">
     <li>
-      <img :src="primaryImageSmall" />
+      <img :src="image" />
       <div class="mt-1">
-        <span class="text-lg font-medium text-gray-900">{{ title }}</span>
-        <div class="text-base text-gray-900">{{ artistDisplayName }}</div>
-        <div>
-          <span class="text-base text-gray-700">{{ objectBeginDate }}</span>
-          <span class="text-base text-gray-700"> - </span>
-          <span class="text-base text-gray-700">{{ objectEndDate }}</span>
-        </div>
+        <span class="text-lg font-medium text-gray-900">{{ longTitle }}</span>
+        <div class="text-base text-gray-900">{{ artist }}</div>
       </div>
     </li>
   </RouterLink>
