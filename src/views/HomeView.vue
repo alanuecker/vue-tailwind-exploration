@@ -57,12 +57,13 @@ async function fetchData() {
         <div v-if="error">{{ error }}</div>
         <div v-if="results && results.length > 0">
           <span class="text-base text-gray-900">Found: {{ total }}</span>
-          <ul class="mt-4 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          <ul class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
             <ListItem
               v-for="result in results"
+              class="border-t sm:nth-[2n+1]:border-r lg:[&:not(:nth-child(4n+4))]:border-r"
               :key="result.id"
               :objectNumber="result.objectNumber"
-              :longTitle="result.longTitle"
+              :title="result.title"
               :artist="result.artist"
               :image="result.image"
             />
