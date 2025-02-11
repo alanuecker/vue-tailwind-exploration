@@ -31,9 +31,9 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <header class="flex w-full items-center justify-center border-b-2 border-b-gray-900 bg-white">
-    <div class="container">
-      <div class="relative flex w-full items-center justify-end px-4 py-2 lg:justify-start">
+  <header class="flex w-full items-center border-b-2 border-b-gray-900 bg-white">
+    <div>
+      <div class="relative flex w-full items-center justify-end px-6 py-2 lg:justify-start">
         <button
           @click="toggleNavbar"
           ref="dropdownButtonRef"
