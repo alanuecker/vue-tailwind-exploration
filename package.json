@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite & yarn run dev:server",
+    "dev:server": "docker run -p 8080:8080 -it ghcr.io/imgproxy/imgproxy:latest",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
     "build-only": "vite build",

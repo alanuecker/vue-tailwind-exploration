@@ -8,6 +8,8 @@ For now it just fetches data from the public Rijksmuseum API.
 
 ```sh
 yarn
+
+docker pull ghcr.io/imgproxy/imgproxy:latest
 ```
 
 ### Compile and Hot-Reload for Development

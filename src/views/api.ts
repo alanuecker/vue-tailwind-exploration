@@ -26,18 +26,22 @@ export async function getSearch(term: string): Promise<SearchResult> {
     }
 
     const data = await response.json();
-    console.log(data);
+
     return {
       count: data.count,
       items: data.artObjects.map(
-        ({ id, objectNumber, title, longTitle, principalOrFirstMaker, webImage }) => ({
-          id,
-          objectNumber,
-          title,
-          longTitle,
-          artist: principalOrFirstMaker,
-          image: webImage.url,
-        }),
+        ({ id, objectNumber, title, longTitle, principalOrFirstMaker, webImage }) => {
+          const image = `http://localhost:8080/pr:sharp/rs:auto:512:512:0/g:sm/plain/${webImage.url}`;
+
+          return {
+            id,
+            objectNumber,
+            title,
+            longTitle,
+            artist: principalOrFirstMaker,
+            image,
+          };
+        },
       ),
     };
   } catch (error) {
@@ -62,13 +66,15 @@ export async function getItem(objectNumber: string): Promise<Item> {
 
     const { id, title, longTitle, principalOrFirstMaker, webImage } = data.artObject;
 
+    const image = `http://localhost:8080/pr:sharp/plain/${webImage.url}`;
+
     return {
       id,
       objectNumber,
       title,
       longTitle,
       artist: principalOrFirstMaker,
-      image: webImage.url,
+      image,
     };
   } catch (error) {
     throw new Error(error);
