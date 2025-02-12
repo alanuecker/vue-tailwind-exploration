@@ -60,7 +60,6 @@ async function fetchData() {
           <ul class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
             <ListItem
               v-for="result in results"
-              class="border-t sm:nth-[2n+1]:border-r lg:[&:not(:nth-child(4n+4))]:border-r"
               :key="result.id"
               :objectNumber="result.objectNumber"
               :title="result.title"
