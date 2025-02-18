@@ -1,0 +1,7 @@
+services:
+  imgproxy:
+    image: ghcr.io/imgproxy/imgproxy:latest
+    ports:
+      - '8080:8080'
+    environment:
+      IMGPROXY_ALLOW_ORIGIN: '*'

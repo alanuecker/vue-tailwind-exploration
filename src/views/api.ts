@@ -31,7 +31,18 @@ export async function getSearch(term: string): Promise<SearchResult> {
       count: data.count,
       items: data.artObjects.map(
         ({ id, objectNumber, title, longTitle, principalOrFirstMaker, webImage }) => {
-          const image = `http://localhost:8080/pr:sharp/rs:auto:512:512:0/g:sm/plain/${webImage.url}`;
+          const imgProxyURL = generateUrl(
+            {
+              value: webImage.url,
+              type: 'plain',
+            },
+            {
+              width: 512,
+              height: 512,
+              format: 'webp',
+              quality: 80,
+            },
+          );
 
           return {
             id,
@@ -39,7 +50,7 @@ export async function getSearch(term: string): Promise<SearchResult> {
             title,
             longTitle,
             artist: principalOrFirstMaker,
-            image,
+            image: new URL(imgProxyURL, IMGPROXY_URL).toString(),
           };
         },
       ),
@@ -66,7 +77,15 @@ export async function getItem(objectNumber: string): Promise<Item> {
 
     const { id, title, longTitle, principalOrFirstMaker, webImage } = data.artObject;
 
-    const image = `http://localhost:8080/pr:sharp/plain/${webImage.url}`;
+    const imgProxyURL = generateUrl(
+      {
+        value: webImage.url,
+        type: 'plain',
+      },
+      {
+        format: 'webp',
+      },
+    );
 
     return {
       id,
@@ -74,7 +93,7 @@ export async function getItem(objectNumber: string): Promise<Item> {
       title,
       longTitle,
       artist: principalOrFirstMaker,
-      image,
+      image: new URL(imgProxyURL, IMGPROXY_URL).toString(),
     };
   } catch (error) {
     throw new Error(error);
