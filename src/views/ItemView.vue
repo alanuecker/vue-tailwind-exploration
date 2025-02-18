@@ -4,6 +4,7 @@ import type { Ref } from 'vue';
 import { useRoute } from 'vue-router';
 
 import Button from '../components/Button.vue';
+import { useProxyHealthStore } from '../stores/proxyHealth';
 
 import { getItem } from './api.ts';
 import type { Item } from './api.ts';
@@ -14,6 +15,8 @@ const loading = ref(false);
 const result: Ref<Item | null> = ref(null);
 const error = ref(null);
 
+const proxyHealthStore = useProxyHealthStore();
+
 watch(() => route.params.id, fetchData, { immediate: true });
 
 async function fetchData(id: string) {
@@ -22,7 +25,7 @@ async function fetchData(id: string) {
   loading.value = true;
 
   try {
-    const item = await getItem(id);
+    const item = await getItem(id, proxyHealthStore.healthy);
     result.value = item;
   } catch (err) {
     error.value = err.toString();

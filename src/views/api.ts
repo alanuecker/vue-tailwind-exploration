@@ -1,4 +1,7 @@
+import { generateUrl } from '@imgproxy/imgproxy-js-core';
+
 const API_KEY = import.meta.env.VITE_API_KEY;
+const IMGPROXY_URL = 'http://localhost:8080';
 
 interface SearchResult {
   count: number;
@@ -14,7 +17,24 @@ export interface Item {
   image: string;
 }
 
-export async function getSearch(term: string): Promise<SearchResult> {
+export async function checkProxyHealth() {
+  try {
+    // todo: the IMGPROXY request does not provide a CORS header for this request
+    // couldn't figure out why yet so I set the the mode to no-cors
+    // and we just assume the service is working if it doesn't throw an error
+    const response = await fetch(`${IMGPROXY_URL}/health`, { mode: 'no-cors' });
+
+    // if (!response.ok) {
+    //   return false;
+    // }
+
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
+export async function getSearch(term: string, proxyAvailable: boolean): Promise<SearchResult> {
   try {
     const response = await fetch(
       `https://www.rijksmuseum.nl/api/en/collection?key=${API_KEY}&format=json&p=0&ps=20&q=${term}&imgonly=true`,
@@ -50,7 +70,7 @@ export async function getSearch(term: string): Promise<SearchResult> {
             title,
             longTitle,
             artist: principalOrFirstMaker,
-            image: new URL(imgProxyURL, IMGPROXY_URL).toString(),
+            image: proxyAvailable ? new URL(imgProxyURL, IMGPROXY_URL).toString() : webImage.url,
           };
         },
       ),
@@ -60,7 +80,7 @@ export async function getSearch(term: string): Promise<SearchResult> {
   }
 }
 
-export async function getItem(objectNumber: string): Promise<Item> {
+export async function getItem(objectNumber: string, proxyAvailable: boolean): Promise<Item> {
   try {
     const response = await fetch(
       `https://www.rijksmuseum.nl/api/en/collection/${objectNumber}?key=${API_KEY}&format=json`,
@@ -72,8 +92,6 @@ export async function getItem(objectNumber: string): Promise<Item> {
     }
 
     const data = await response.json();
-
-    console.log(data);
 
     const { id, title, longTitle, principalOrFirstMaker, webImage } = data.artObject;
 
@@ -93,7 +111,7 @@ export async function getItem(objectNumber: string): Promise<Item> {
       title,
       longTitle,
       artist: principalOrFirstMaker,
-      image: new URL(imgProxyURL, IMGPROXY_URL).toString(),
+      image: proxyAvailable ? new URL(imgProxyURL, IMGPROXY_URL).toString() : webImage.url,
     };
   } catch (error) {
     throw new Error(error);

@@ -4,6 +4,7 @@ import type { Ref } from 'vue';
 
 import ListItem from '../components/ListItem.vue';
 import Button from '../components/Button.vue';
+import { useProxyHealthStore } from '../stores/proxyHealth.ts';
 
 import { getSearch } from './api.ts';
 import type { Item } from './api.ts';
@@ -14,13 +15,15 @@ const error = ref(null);
 const total = ref(0);
 const text = ref('Sunflowers');
 
+const proxyHealthStore = useProxyHealthStore();
+
 async function fetchData() {
   error.value = null;
   results.value = [];
   loading.value = true;
 
   try {
-    const searchResult = await getSearch(text.value);
+    const searchResult = await getSearch(text.value, proxyHealthStore.healthy);
     total.value = searchResult.count;
 
     results.value = searchResult.items;
