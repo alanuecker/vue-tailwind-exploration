@@ -1,34 +1,28 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import type { Ref } from 'vue';
 
 import ListItem from '../components/ListItem.vue';
 import Button from '../components/Button.vue';
 import { useProxyHealthStore } from '../stores/proxyHealth.ts';
+import { useSearchStore } from '../stores/search.ts';
 
 import { getSearch } from './api.ts';
-import type { Item } from './api.ts';
 
 const loading = ref(false);
-const results: Ref<Item[]> = ref([]);
-const error = ref(null);
-const total = ref(0);
-const text = ref('Sunflowers');
 
 const proxyHealthStore = useProxyHealthStore();
+const searchStore = useSearchStore();
 
 async function fetchData() {
-  error.value = null;
-  results.value = [];
   loading.value = true;
 
   try {
-    const searchResult = await getSearch(text.value, proxyHealthStore.healthy);
-    total.value = searchResult.count;
+    const searchResult = await getSearch(searchStore.term, proxyHealthStore.healthy);
 
-    results.value = searchResult.items;
+    searchStore.total = searchResult.count;
+    searchStore.items = searchResult.items;
   } catch (err) {
-    error.value = err.toString();
+    console.error(error);
   } finally {
     loading.value = false;
   }
@@ -44,7 +38,7 @@ async function fetchData() {
           <input
             id="search"
             name="search"
-            v-model="text"
+            v-model="searchStore.term"
             class="w-full min-w-0 flex-auto rounded-md bg-white px-3.5 py-2 text-base text-gray-900 outline-1
               -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500"
           />
@@ -56,18 +50,16 @@ async function fetchData() {
     </div>
     <div class="mt-8 flex w-full items-center justify-center bg-white">
       <div class="flex w-full items-end gap-4">
-        <div v-if="loading" class="pl-12 text-base text-gray-900">Loading</div>
-        <div v-if="error" class="pl-12 text-base text-gray-900">{{ error }}</div>
-        <div v-if="results && results.length > 0">
-          <span class="pl-12 text-base text-gray-900">Found: {{ total }}</span>
+        <div v-if="searchStore.items && searchStore.items.length > 0">
+          <span class="pl-12 text-base text-gray-900">Found: {{ searchStore.total }}</span>
           <ul class="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
             <ListItem
-              v-for="result in results"
-              :key="result.id"
-              :objectNumber="result.objectNumber"
-              :title="result.title"
-              :artist="result.artist"
-              :image="result.image"
+              v-for="item in searchStore.items"
+              :key="item.id"
+              :objectNumber="item.objectNumber"
+              :title="item.title"
+              :artist="item.artist"
+              :image="item.image"
             />
           </ul>
         </div>
