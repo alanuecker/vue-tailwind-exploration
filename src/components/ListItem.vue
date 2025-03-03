@@ -6,6 +6,7 @@ defineProps<{
   title: string;
   artist: string;
   image: string;
+  splitView?: boolean;
 }>();
 
 const itemLink = useTemplateRef('item-link');
@@ -47,11 +48,11 @@ onUnmounted(() => {
 
 <template>
   <RouterLink
-    :class="{ 'after:w-full': inView }"
+    :class="{ 'after:w-full': inView, 'border-r': splitView }"
     class="after:transition-width after:block after:h-0.25 after:w-0 after:bg-black after:duration-400
       after:content-[''] sm:nth-[-n+2]:border-t sm:nth-[2n+1]:border-r lg:nth-[-n+4]:border-t
       lg:[&:not(:nth-child(4n+4))]:border-r"
-    :to="'items/' + objectNumber"
+    :to="'/' + objectNumber"
   >
     <li ref="item-link" class="flex h-full flex-col justify-end p-12">
       <div class="flex h-full flex-col justify-center">

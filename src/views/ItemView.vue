@@ -36,19 +36,20 @@ async function fetchData(id: string) {
 </script>
 
 <template>
-  <main>
-    <div class="mt-8 flex w-full items-center justify-center bg-white">
-      <div class="container flex w-full px-4">
-        <div v-if="loading">Loading</div>
-        <div v-if="error">{{ error }}</div>
-        <div class="flex flex-col" v-if="result">
-          <img :src="result.image" />
-          <div class="mt-1">
-            <h1 class="text-3xl font-bold text-gray-900">{{ result.longTitle }}</h1>
-            <h2 class="text-lg text-gray-900">{{ result.artist }}</h2>
-          </div>
+  <div class="flex w-full justify-center">
+    <div class="sticky top-0 container flex max-h-screen w-full justify-center border-t p-12">
+      <div v-if="loading">Loading</div>
+      <div v-if="error">{{ error }}</div>
+      <div
+        class="grid h-full max-h-full grid-cols-1 grid-rows-[1fr_min-content] gap-4"
+        v-if="result"
+      >
+        <img class="h-full min-h-px w-full min-w-px object-contain" :src="result.image" />
+        <div class="flex flex-col gap-2">
+          <h1 class="text-3xl font-bold text-gray-900">{{ result.longTitle }}</h1>
+          <h2 class="text-lg text-gray-900">{{ result.artist }}</h2>
         </div>
       </div>
     </div>
-  </main>
+  </div>
 </template>
