@@ -34,10 +34,14 @@ export async function checkProxyHealth() {
   }
 }
 
-export async function getSearch(term: string, proxyAvailable: boolean): Promise<SearchResult> {
+export async function getSearch(
+  term: string,
+  proxyAvailable: boolean,
+  page: number = 1,
+): Promise<SearchResult> {
   try {
     const response = await fetch(
-      `https://www.rijksmuseum.nl/api/en/collection?key=${API_KEY}&format=json&p=0&ps=20&q=${term}&imgonly=true`,
+      `https://www.rijksmuseum.nl/api/en/collection?key=${API_KEY}&format=json&p=${page}&ps=20&q=${term}&imgonly=true`,
       { method: 'GET' },
     );
 
@@ -46,6 +50,8 @@ export async function getSearch(term: string, proxyAvailable: boolean): Promise<
     }
 
     const data = await response.json();
+
+    console.log(data);
 
     return {
       count: data.count,

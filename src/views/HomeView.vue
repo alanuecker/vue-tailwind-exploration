@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch, onUnmounted, useTemplateRef, onUpdated } from 'vue';
 import { RouterView, useRoute, useRouter } from 'vue-router';
 
 import ListItem from '../components/ListItem.vue';
@@ -10,6 +10,8 @@ import { useSearchStore } from '../stores/search.ts';
 import { getSearch } from './api.ts';
 
 const loading = ref(false);
+const page = ref(1);
+const prevSearchTerm = ref('');
 
 const proxyHealthStore = useProxyHealthStore();
 const searchStore = useSearchStore();
@@ -18,6 +20,8 @@ const route = useRoute();
 const router = useRouter();
 const splitView = ref(!!route.params.id);
 
+const loadingRef = useTemplateRef('loading');
+
 watch(
   () => route.params.id,
   (newId, oldId) => {
@@ -25,22 +29,60 @@ watch(
   },
 );
 
-async function fetchData() {
+async function fetchData(page?: number) {
   router.push('/');
   splitView.value = false;
   loading.value = true;
 
   try {
-    const searchResult = await getSearch(searchStore.term, proxyHealthStore.healthy);
+    const searchResult = await getSearch(searchStore.term, proxyHealthStore.healthy, page);
 
-    searchStore.total = searchResult.count;
-    searchStore.items = searchResult.items;
+    searchStore.$patch((state) => {
+      state.total = searchResult.count;
+
+      if (prevSearchTerm.value !== state.term) {
+        state.items = searchResult.items;
+      } else {
+        state.items.push(...searchResult.items);
+      }
+    });
+
+    prevSearchTerm.value = searchStore.term;
   } catch (err) {
     console.error(error);
   } finally {
     loading.value = false;
   }
 }
+
+async function loadNextPage() {
+  page.value++;
+  fetchData(page.value);
+  console.log('load next page', page.value);
+}
+
+let observer = new IntersectionObserver(
+  (entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        loadNextPage();
+      }
+    });
+  },
+  {
+    threshold: 0.1,
+  },
+);
+
+onUpdated(() => {
+  if (loadingRef.value && !observer.takeRecords().length) {
+    observer.observe(loadingRef.value);
+  }
+});
+
+onUnmounted(() => {
+  observer.disconnect();
+});
 </script>
 
 <template>
@@ -67,20 +109,23 @@ async function fetchData() {
     </div>
     <div class="mt-8 flex">
       <div :class="{ 'w-full': !splitView }" class="flex items-center justify-center bg-white">
-        <div class="flex items-end gap-4">
-          <div v-if="searchStore.items && searchStore.items.length > 0">
-            <ul :class="{ 'sm:grid-cols-2 lg:grid-cols-4': !splitView }" class="grid grid-cols-1">
-              <ListItem
-                v-for="item in searchStore.items"
-                :key="item.id"
-                :objectNumber="item.objectNumber"
-                :title="item.title"
-                :artist="item.artist"
-                :image="item.image"
-                :splitView="splitView"
-              />
-            </ul>
-          </div>
+        <div v-if="searchStore.items && searchStore.items.length > 0" class="flex items-end gap-4">
+          <ul
+            ref="result-list"
+            :class="{ 'sm:grid-cols-2 lg:grid-cols-4': !splitView }"
+            class="grid grid-cols-1"
+          >
+            <ListItem
+              v-for="item in searchStore.items"
+              :key="item.id"
+              :objectNumber="item.objectNumber"
+              :title="item.title"
+              :artist="item.artist"
+              :image="item.image"
+              :splitView="splitView"
+            />
+          </ul>
+          <div ref="loading" class="h-16"></div>
         </div>
       </div>
       <RouterView class="flex" />
